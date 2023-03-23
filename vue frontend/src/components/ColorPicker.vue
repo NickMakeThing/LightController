@@ -28,6 +28,7 @@
 
     export default {
         name: 'ColorPicker',
+        emits:['colorToParent'],
         data(){
             return {
                 hue:120,
@@ -49,8 +50,9 @@
             this.pickedColor = this.rgbAtCircle()
         },
         beforeUpdate(){
+            //dimensions reassignment prevents the circle from appearing in wrong place after scrolling
             this.boxDimensions = this.$refs.colorPickerBox.getBoundingClientRect()
-            //prevents the circle from appearing in wrong place after scrolling
+            this.$emit('colorToParent', this.pickedColor)
         },
         computed:{
             boxGradient(){
@@ -136,11 +138,9 @@
                 }
             },
             rgbNumbersChanged(){
-                let hsv = colorsys.rgbToHsv(this.pickedColor)
-                console.log(hsv)
+                let hsv = colorsys.rgbToHsv(this.pickedColor)                
                 this.pixelSelectedX = hsv.s / 100 * this.boxDimensions.width - 5
                 this.pixelSelectedY = this.boxDimensions.height - hsv.v * this.boxDimensions.height/100 - 5
-                console.log( this.pixelSelectedX, this.pixelSelectedY)
                 this.hue = hsv.h
             }
         }
@@ -150,14 +150,11 @@
 
 <style scoped>
 #color-picker-container{
-    width:100%;
-    justify-content:center;
     display:flex;
     gap:30px;
-    margin-top:100px;
-    
 }
 #color-preview{
+    display:none;
     width:50px;
     height:50px;
     border-radius:10%;
