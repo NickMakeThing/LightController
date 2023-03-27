@@ -11,9 +11,8 @@
                     <circle cx="5" cy="5" r="4" stroke="white" stroke-width="2px" fill="none" />
                 </svg>
             </div>
-            <input v-model='hue' @mousedown='mouseDownSlider=true' @mousemove='pickColorOnSliderMove' id='hue-slider' type='range' max=360 />
+            <input v-model='hue' @mousedown='sliderMouseDown' id='hue-slider' type='range' max=360 />
             <div id='picked-color-numbers' @change='rgbNumbersChanged'> 
-                <!-- @change="numericValuesModified" -->
                 <span>R<input class='rgb-input' type='number' v-model='pickedColor.r'></span>
                 <span>G<input class='rgb-input' type='number' v-model='pickedColor.g'></span>
                 <span>B<input class='rgb-input' type='number' v-model='pickedColor.b'></span>
@@ -32,6 +31,7 @@
         data(){
             return {
                 hue:120,
+                brightness:0,
                 mouseInBox:false,
                 mouseDownBox:false,
                 boxDimensions:null,
@@ -46,12 +46,13 @@
             document.addEventListener("mousemove", this.pickColor)
             document.addEventListener("mouseup", this.pageMouseUp)
             this.boxDimensions = this.$refs.colorPickerBox.getBoundingClientRect()
-            this.pixelSelectedX = this.boxDimensions.width - 5
+            this.pixelSelectedX = this.boxDimensions.width - 5 // or just -5
             this.pickedColor = this.rgbAtCircle()
         },
         beforeUpdate(){
             //dimensions reassignment prevents the circle from appearing in wrong place after scrolling
             this.boxDimensions = this.$refs.colorPickerBox.getBoundingClientRect()
+                // change this^ to happen on scroll events
             this.$emit('colorToParent', this.pickedColor)
         },
         computed:{
@@ -71,12 +72,20 @@
                 return 'top:'+this.pixelSelectedY+'px; left:'+this.pixelSelectedX+'px;'
             }
         },
+        watch: {
+            hue(){
+                this.pickColorOnSliderMove()
+            }
+        },
         methods:{
-            pageMouseUp (){
-                this.mouseDownBox = false
-                this.mouseDownSlider = false
+            pageMouseUp(){
+                if(this.mouseDownBox || this.mouseDownSlider){
+                    this.mouseDownBox = false
+                    this.mouseDownSlider = false
+                    this.sendColor()
+                }
             },
-            boxMouseDown (){
+            boxMouseDown(){
                 this.mouseDownBox = true
                 this.pickColor()
             },
@@ -86,7 +95,7 @@
             boxMouseLeave(){
                 this.mouseInBox = false
             },
-            pickColor (){
+            pickColor(){
                 if(this.mouseDownBox){
                     let mouse = { //x,y coords of inside the box
                         x: window.event.clientX - this.boxDimensions.x,
@@ -94,19 +103,19 @@
                     }
                     this.pixelSelectedX = mouse.x - 5
                     this.pixelSelectedY = mouse.y - 5
-
                     if(this.mouseInBox){
                         this.pickedColor = this.rgbAtMouse(mouse)
                     } else {
                         this.moveCircleToBoxEdge()
                         this.pickedColor = this.rgbAtCircle()
                     }
-                }
+                } 
             },
             rgbAtMouse(mouse){
                 let saturation = mouse.x / this.boxDimensions.width * 100
                 let value = 100 - mouse.y / this.boxDimensions.height * 100
                 let rgb = colorsys.hsvToRgb({h:this.hue,s:saturation,v:value})
+                this.brightness = value
                 return rgb
             },
             rgbAtCircle(){
@@ -117,6 +126,7 @@
                 let saturation = colorX / this.boxDimensions.width * 100
                 let value = 100 - colorY / this.boxDimensions.height * 100
                 let rgb = colorsys.hsvToRgb({h:this.hue,s:saturation,v:value})
+                this.brightness = value
                 return rgb
             },
             moveCircleToBoxEdge(){
@@ -132,6 +142,9 @@
                     this.pixelSelectedY = 0 - 5 
                 }
             },
+            sliderMouseDown(){
+                this.mouseDownSlider=true
+            },
             pickColorOnSliderMove(event){
                 if(this.mouseDownSlider){
                     this.pickedColor = this.rgbAtCircle()
@@ -142,6 +155,25 @@
                 this.pixelSelectedX = hsv.s / 100 * this.boxDimensions.width - 5
                 this.pixelSelectedY = this.boxDimensions.height - hsv.v * this.boxDimensions.height/100 - 5
                 this.hue = hsv.h
+                this.brightness = hsv.v
+                this.sendColor()
+            },
+            async sendColor(){
+                var brightness = this.brightness 
+                var color = [this.pickedColor.r,this.pickedColor.g,this.pickedColor.b].map(value => {
+                    if(value === ''){
+                        return 0
+                    } else {
+                        return value
+                    }
+                })
+                let response = await fetch('http://127.0.0.1:8000',
+                    {
+                        method : 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body : JSON.stringify({color,brightness}) //breaks when i use this.* here
+                    }
+                )
             }
         }
 

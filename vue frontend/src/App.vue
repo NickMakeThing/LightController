@@ -1,11 +1,8 @@
 <template>
-
-  <!-- <img height='50' alt="Vue logo" src="./assets/logo.png"> -->
   <div id='main-container'>
     <LightBulb :color='color'/>
     <ColorPicker @colorToParent='colorChange'/>
   </div>
-  <!-- <BrightnessSlider /> -->
 </template>
 
 <script>
@@ -16,14 +13,12 @@ import LightBulb from './components/LightBulb.vue'
 export default {
   name: 'App',
   components: {
-    // BrightnessSlider,
     LightBulb,
     ColorPicker
   },
   data(){
     return{
       color:null,
-      colorProp:null
     }
   },
   methods: {

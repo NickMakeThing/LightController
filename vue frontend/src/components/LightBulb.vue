@@ -35,6 +35,7 @@
                 if(this.color){
                     return `rgb(${this.color.r},${this.color.g},${this.color.b})`
                 }
+                return ''
             }
         }
     }
