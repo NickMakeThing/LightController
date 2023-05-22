@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from light_controller.views import ChangeLightbulbColor
+from light_controller.views import GetChanges, DeleteChange, ChangeColorNow, ChangeColorLater
 
 urlpatterns = [
-    path('', ChangeLightbulbColor.as_view()),
+    path('get', GetChanges.as_view()),
+    path('delete/<int:id>/', DeleteChange.as_view()),
+    path('now', ChangeColorNow.as_view()),
+    path('create', ChangeColorLater.as_view()),
 ]
