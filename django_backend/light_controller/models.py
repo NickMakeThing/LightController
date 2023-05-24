@@ -7,7 +7,7 @@ def rgb_field():
     )
 
 class ColorChange(models.Model):
-    time = models.TimeField() 
+    time = models.TimeField(unique=True) 
     red = rgb_field()
     green = rgb_field()
     blue = rgb_field()

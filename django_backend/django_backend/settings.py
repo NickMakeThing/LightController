@@ -23,14 +23,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'django_q',
     'light_controller', 
 ]
 
-Q_CLUSTER = {
-    "name": "doesthismatter?",
-    "orm": "default",
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,7 +69,7 @@ DATABASES = {
         'NAME': os.environ['DATABASENAME'], 
         'USER': os.environ['DATABASEUSER'], 
         'PASSWORD': os.environ['DATABASEPASSWORD'],
-        'HOST': '172.31.199.144', 
+        'HOST': '172.20.159.207', 
         'PORT': '5432',
     }
 }

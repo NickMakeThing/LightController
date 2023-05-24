@@ -26,7 +26,6 @@ class ChangeColorLater(CreateAPIView):
     serializer_class = CreateChangeSerializer
     #need to update worker on post
     def post(self, request, *args, **kwargs):
-        print(parse_time(request.data['time']))
         request.data['time'] = parse_time(request.data['time'])
         return self.create(request, *args, **kwargs)
 
@@ -38,8 +37,8 @@ class ChangeColorNow(APIView):
 
     def post(self, request, format=None):
         current_time = time.time()
+        print(request.data['color'])
         if(current_time > self.next_allowed_request['time']):
-            print(request.data['color'])
             self.light.set_colour(*request.data['color'])
             self.light.set_brightness(request.data['brightness']*10)
             self.next_allowed_request['time'] = time.time()+1
