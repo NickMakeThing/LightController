@@ -38,14 +38,16 @@
 <style scoped>
   #change-form{
     height: 50px;
-    max-width:100%;
+    width:90%;
     padding:5px;
     border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap:15px;
-    border: solid 1px lightgreen;
+    box-shadow: 0px 1px 5px black;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
   .change-time{
     font-size:180%;
@@ -60,5 +62,8 @@
     height:30px;
     width:30px;
     border-radius:5px;
+  }
+  #change-form-time{
+    border-radius:3px;
   }
 </style>

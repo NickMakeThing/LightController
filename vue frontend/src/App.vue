@@ -1,17 +1,20 @@
 <template>
-  <div id='main-container'>
-    <div id='picker-container'>
-      <LightBulb :color='color'/>
-      <ColorPicker @colorToParent='colorChange'/>
-    </div>
-    <div id='changes-container'>
-      <AutoChange v-for="change in changeList" :key='change.id'
-        :time='change.time' 
-        :color='{r:change.red, g:change.green, b:change.blue}'
-        :id='change.id'
-        :getChanges='getChanges'
-      />
-      <AutoChangeForm :color='color' :getChanges='getChanges'/>
+  <div id='page-container'>
+    <RainbowBackground />
+    <div id='main-container'>
+      <div id='picker-container'>
+        <LightBulb :color='color'/>
+        <ColorPicker @colorToParent='colorChange'/>
+      </div>
+      <div id='changes-container'>
+        <AutoChange v-for="change in changeList" :key='change.id'
+          :time='change.time' 
+          :color='{r:change.red, g:change.green, b:change.blue}'
+          :id='change.id'
+          :getChanges='getChanges'
+        />
+        <AutoChangeForm :color='color' :getChanges='getChanges'/>
+      </div>
     </div>
   </div>
 </template>
@@ -21,6 +24,7 @@
   import AutoChangeForm from './components/AutoChangeForm.vue'
   import ColorPicker from './components/ColorPicker.vue'
   import LightBulb from './components/LightBulb.vue'
+  import RainbowBackground from './components/RainbowBackground.vue'
    
   export default {
     name: 'App',
@@ -29,6 +33,7 @@
       ColorPicker,
       AutoChange,
       AutoChangeForm, 
+      RainbowBackground
     },
     data(){
       return{
@@ -52,14 +57,23 @@
 </script>
 
 <style>
+  #page-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    width:100%;
+  }
   #main-container{
     display:flex;
-    gap:25px;
-    margin-top:50px;
     justify-content:center;
-    height:100vh;
-    width:100vw;
-    padding:8px;
+    gap:25px;
+    padding:30px;
+    border: solid 3px rgba(199,199,199);
+
+    border-radius:5%;
+    background:rgba(255,255,255,1);
+    box-shadow: 0px 0px 13px black;
   }
   #picker-container{
     display:flex;
@@ -67,10 +81,13 @@
     gap:25px;
   }
   #changes-container{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
     font-family: Arial, sans-serif;
-    border: solid 1px black;
     width: 230px;
     height: 550px; 
-    border-radius: 5px;
+    overflow: auto;
+    scrollbar-width: thin;
   }
   </style>

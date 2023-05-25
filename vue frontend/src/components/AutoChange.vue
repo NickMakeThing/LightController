@@ -36,14 +36,16 @@
 <style scoped>
   .change{
     height: 50px;
-    max-width:100%;
+    max-width:90%;
     padding:5px;
     border-radius: 5px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     justify-items: center;
-    border: solid 1px blue;
+    box-shadow: 0px 1px 5px black;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
   .change-time{
     font-size:180%;
